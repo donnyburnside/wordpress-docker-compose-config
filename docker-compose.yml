@@ -1,59 +1,53 @@
-version: '3.5'
+version: '3'
 
 services:
-  # WordPress
-  wordpress:
-    container_name: wordpress
-    image: wordpress:latest
-    volumes:
-      - ./wordpress:/var/www/html
-    ports:
-      - 8000:80
-    restart: always
-    environment:
-      WORDPRESS_DB_HOST: database
-      WORDPRESS_DB_NAME: db
-      WORDPRESS_DB_USER: dbuser
-      WORDPRESS_DB_PASSWORD: dbpassword
-      WORDPRESS_TABLE_PREFIX: wp_
-    networks:
-      web:
-        aliases:
-          - wordpress
-
   # Database
-  database:
-    container_name: database
+  db:
     image: mysql:5.7
+    platform: linux/amd64
     volumes:
       - ./database:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=securerootpassword
-      - MYSQL_DATABASE=db
-      - MYSQL_USER=dbuser
-      - MYSQL_PASSWORD=dbpassword
-    networks:
-      web:
-        aliases:
-          - database
-
-  # phpMyAdmin
-  phpmyadmin:
-    container_name: phpmyadmin
-    image: phpmyadmin/phpmyadmin
-    depends_on:
-      - database
-    ports:
-      - 8080:80
     restart: always
     environment:
-      PMA_HOST: database
-      MYSQL_ROOT_PASSWORD: securerootpassword 
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
     networks:
-      web:
-        aliases:
-          - phpmyadmin
-
+      - wpsite
+  # phpmyadmin
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    platform: linux/amd64
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: password 
+    networks:
+      - wpsite
+  # Wordpress
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    platform: linux/amd64
+    ports:
+      - '8000:80'
+    restart: always
+    volumes:
+      - ./wordpress:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    networks:
+      - wpsite
 networks:
-  web:
-    name: web-network
+  wpsite:
+volumes:
+  db_data:
+  wp_data:
