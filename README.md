@@ -10,9 +10,8 @@ Docker environment featuring the latest version of WordPress, MySQL and phpMyAdm
 
 ## How to use
 1. Clone the repo to your machine.
-2. Run `npm install`
-3. Start the containers by running `docker-compose up -d`
-4. That's it, you're good to go!. You can now [view the application](http://localhost:8000) or [manage the database](http://localhost:8080) (use the `MYSQL_USER` and `MYSQL_PASSWORD` settings from `docker-compose.yml` to login to phpMyAdmin). See the [commands](#commands) section below for more information.
+1. Start the containers by running `docker-compose up -d`
+1. That's it, you're good to go!. You can now [view the application](http://localhost:8000) or [manage the database](http://localhost:8080) (use the `MYSQL_USER` and `MYSQL_PASSWORD` settings from `docker-compose.yml` to login to phpMyAdmin). See the [commands](#commands) section below for more information.
 
 
 ## Commands
